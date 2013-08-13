@@ -36,12 +36,13 @@ import java.nio.ByteBuffer;
 public class RawPacketWriter implements PacketWriter
 {
     public static RawPacketWriter INSTANCE = new RawPacketWriter();
-    
+
     private RawPacketWriter()
     {
     }
 
-    public ByteBuffer[] write(ByteBuffer[] byteBuffers)
+    @Override
+    public ByteBuffer[] write(final ByteBuffer[] byteBuffers)
     {
         return byteBuffers;
     }

@@ -1,6 +1,6 @@
 package naga;
 /**
- * @author Christoffer Lerno 
+ * @author Christoffer Lerno
  */
 
 import junit.framework.TestCase;
@@ -37,7 +37,7 @@ public class NIOUtilsTest extends TestCase
 
 	public void testSetPacketSizeInByteBufferTooBig()
 	{
-        ByteBuffer buffer = ByteBuffer.allocate(10);
+        final ByteBuffer buffer = ByteBuffer.allocate(10);
 		try
 		{
 			NIOUtils.setPacketSizeInByteBuffer(buffer, 3, -1, true);
@@ -69,7 +69,7 @@ public class NIOUtilsTest extends TestCase
 
 	public void testSetPacketSizeInByteBuffer() throws Exception
 	{
-        ByteBuffer buffer = ByteBuffer.allocate(10);
+        final ByteBuffer buffer = ByteBuffer.allocate(10);
 		getByteBufferFromPacketSizeTests(true);
 		getByteBufferFromPacketSizeTests(false);
         NIOUtils.setPacketSizeInByteBuffer(buffer, 1, 0xFF, true);
@@ -81,9 +81,9 @@ public class NIOUtilsTest extends TestCase
 		assertEquals(0x00, NIOUtils.getPacketSizeFromByteBuffer(buffer, 3, true));
 	}
 
-	private void getByteBufferFromPacketSizeTests(boolean endian)
+	private void getByteBufferFromPacketSizeTests(final boolean endian)
 	{
-        ByteBuffer buffer = ByteBuffer.allocate(10);
+        final ByteBuffer buffer = ByteBuffer.allocate(10);
         NIOUtils.setPacketSizeInByteBuffer(buffer, 3, 0xFFFFFF, endian);
         buffer.flip();
 		assertEquals(0xFFFFFF, NIOUtils.getPacketSizeFromByteBuffer(buffer, 3, endian));
@@ -107,7 +107,7 @@ public class NIOUtilsTest extends TestCase
 
 	public void testCancelKeySilently() throws Exception
 	{
-		SelectionKey key = EasyMock.createMock(SelectionKey.class);
+		final SelectionKey key = EasyMock.createMock(SelectionKey.class);
 		key.cancel();
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		EasyMock.replay(key);
@@ -117,7 +117,7 @@ public class NIOUtilsTest extends TestCase
 
 	public void testCloseChannelSilently() throws Exception
 	{
-		Channel channel = EasyMock.createMock(Channel.class);
+		final Channel channel = EasyMock.createMock(Channel.class);
 		channel.close();
 		EasyMock.expectLastCall().andThrow(new IOException());
 		EasyMock.replay(channel);

@@ -38,16 +38,16 @@ class SocketReader
     private ByteBuffer m_previousBytes;
     private long m_bytesRead;
 
-    SocketReader(NIOService nioService)
+    SocketReader(final NIOService nioService)
     {
         m_nioService = nioService;
         m_bytesRead = 0;
     }
 
-    public int read(SocketChannel channel) throws IOException
+    public int read(final SocketChannel channel) throws IOException
     {
         // Retrieve the shared buffer.
-        ByteBuffer buffer = getBuffer();
+        final ByteBuffer buffer = getBuffer();
 
         // Clear the buffer.
         buffer.clear();
@@ -59,7 +59,7 @@ class SocketReader
         }
 
         // Read data
-        int read = channel.read(buffer);
+        final int read = channel.read(buffer);
 
         // We might encounter the end of the socket stream here.
         if (read < 0) throw new EOFException("Buffer read -1");
@@ -78,7 +78,7 @@ class SocketReader
         if (m_previousBytes != null)
         {
             // Remember the old position.
-            int position = buffer.position();
+            final int position = buffer.position();
 
             // Shift to position 0
             buffer.position(0);
@@ -105,7 +105,7 @@ class SocketReader
     public void compact()
     {
         // Retrieve our shared buffer.
-        ByteBuffer buffer = getBuffer();
+        final ByteBuffer buffer = getBuffer();
 
         // If there is data remaining, copy that data.
         if (buffer.remaining() > 0)

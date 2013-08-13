@@ -52,7 +52,7 @@ class SocketWriter
         return m_packetWriter;
     }
 
-    public void setPacketWriter(PacketWriter packetWriter)
+    public void setPacketWriter(final PacketWriter packetWriter)
     {
         m_packetWriter = packetWriter;
     }
@@ -62,7 +62,7 @@ class SocketWriter
         return m_writeBuffers == null;
     }
 
-    public void setPacket(byte[] data, Object tag)
+    public void setPacket(final byte[] data, final Object tag)
     {
         if (!isEmpty()) throw new IllegalStateException("This method should only called when m_writeBuffers == null");
 
@@ -72,7 +72,7 @@ class SocketWriter
         m_tag = tag;
     }
 
-    public boolean write(SocketChannel channel) throws IOException
+    public boolean write(final SocketChannel channel) throws IOException
     {
         // If the packet is empty, just clear data and return true
         if (m_writeBuffers == null
@@ -84,7 +84,7 @@ class SocketWriter
         }
 
         // Write as much as possible to the channel.
-        long written = channel.write(m_writeBuffers, m_currentBuffer, m_writeBuffers.length - m_currentBuffer);
+        final long written = channel.write(m_writeBuffers, m_currentBuffer, m_writeBuffers.length - m_currentBuffer);
 
         // If nothing is written, then the buffer is full and writing should end temporarily.
         if (written == 0) return false;

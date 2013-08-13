@@ -37,7 +37,7 @@ import java.nio.ByteBuffer;
  * </code>
  * <p>
  * Note that the maximum size for 4 bytes is a signed 32 bit int, not unsigned.
- * 
+ *
  * @author Christoffer Lerno
  */
 public class RegularPacketReader implements PacketReader
@@ -51,21 +51,22 @@ public class RegularPacketReader implements PacketReader
 	 * @param headerSize the header size, 1 - 4 bytes.
 	 * @param bigEndian big endian (largest byte first) or little endian (smallest byte first)
 	 */
-	public RegularPacketReader(int headerSize, boolean bigEndian)
+	public RegularPacketReader(final int headerSize, final boolean bigEndian)
 	{
 		if (headerSize < 1 || headerSize > 4) throw new IllegalArgumentException("Header must be between 1 and 4 bytes long.");
 		m_bigEndian = bigEndian;
         m_headerSize = headerSize;
 	}
 
-    public byte[] nextPacket(ByteBuffer byteBuffer) throws ProtocolViolationException
+    @Override
+    public byte[] nextPacket(final ByteBuffer byteBuffer) throws ProtocolViolationException
     {
         if (byteBuffer.remaining() < m_headerSize) return null;
         byteBuffer.mark();
-        int length = NIOUtils.getPacketSizeFromByteBuffer(byteBuffer, m_headerSize, m_bigEndian);
+        final int length = NIOUtils.getPacketSizeFromByteBuffer(byteBuffer, m_headerSize, m_bigEndian);
         if (byteBuffer.remaining() >= length)
         {
-            byte[] packet = new byte[length];
+            final byte[] packet = new byte[length];
             byteBuffer.get(packet);
             return packet;
         }

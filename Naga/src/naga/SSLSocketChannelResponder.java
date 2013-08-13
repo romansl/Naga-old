@@ -39,8 +39,7 @@ class SSLSocketChannelResponder implements NIOSocketSSL, SocketObserver
     private final NIOService m_nioService;
     private SocketObserver m_observer;
 
-    public SSLSocketChannelResponder(NIOService nioService, NIOSocket wrappedSocket, SSLEngine engine, boolean client) throws SSLException
-    {
+    public SSLSocketChannelResponder(final NIOService nioService, final NIOSocket wrappedSocket, final SSLEngine engine, final boolean client) {
         m_nioService = nioService;
         m_wrappedSocket = wrappedSocket;
         m_packetHandler = new SSLPacketHandler(engine, m_wrappedSocket, this);
@@ -49,77 +48,92 @@ class SSLSocketChannelResponder implements NIOSocketSSL, SocketObserver
         engine.setUseClientMode(client);
     }
 
+    @Override
     public void beginHandshake() throws SSLException
     {
         if (getSSLEngine().getHandshakeStatus() != SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) throw new IllegalStateException("Tried to start handshake during handshake.");
         m_packetHandler.begin();
     }
 
+    @Override
     public boolean isEncrypted()
     {
         return m_packetHandler.isEncrypted();
     }
 
+    @Override
     public SSLEngine getSSLEngine()
     {
         return m_packetHandler.getSSLEngine();
     }
 
 
-    public boolean write(byte[] packet)
+    @Override
+    public boolean write(final byte[] packet)
     {
         return m_wrappedSocket.write(packet);
     }
 
-    public boolean write(byte[] packet, Object tag)
+    @Override
+    public boolean write(final byte[] packet, final Object tag)
     {
         return m_wrappedSocket.write(packet, tag);
     }
 
-    public void queue(Runnable runnable)
+    @Override
+    public void queue(final Runnable runnable)
     {
         m_wrappedSocket.queue(runnable);
     }
 
+    @Override
     public long getBytesRead()
     {
         return m_wrappedSocket.getBytesRead();
     }
 
+    @Override
     public long getBytesWritten()
     {
         return m_wrappedSocket.getBytesWritten();
     }
 
+    @Override
     public long getTimeOpen()
     {
         return m_wrappedSocket.getTimeOpen();
     }
 
+    @Override
     public long getWriteQueueSize()
     {
         return m_wrappedSocket.getWriteQueueSize();
     }
 
+    @Override
     public int getMaxQueueSize()
     {
         return m_wrappedSocket.getMaxQueueSize();
     }
 
-    public void setMaxQueueSize(int maxQueueSize)
+    @Override
+    public void setMaxQueueSize(final int maxQueueSize)
     {
         m_wrappedSocket.setMaxQueueSize(maxQueueSize);
     }
 
-    public void setPacketReader(PacketReader packetReader)
+    @Override
+    public void setPacketReader(final PacketReader packetReader)
     {
         m_packetHandler.setReader(packetReader);
     }
 
+    @Override
     public void setPacketWriter(final PacketWriter packetWriter)
     {
         m_wrappedSocket.queue(new Runnable()
         {
+            @Override
             public void run()
             {
                 m_packetHandler.setWriter(packetWriter);
@@ -127,59 +141,69 @@ class SSLSocketChannelResponder implements NIOSocketSSL, SocketObserver
         });
     }
 
-    public void listen(SocketObserver socketObserver)
+    @Override
+    public void listen(final SocketObserver socketObserver)
     {
         m_observer = socketObserver;
         m_wrappedSocket.listen(this);
     }
 
+    @Override
     public void closeAfterWrite()
     {
         m_packetHandler.closeEngine();
         m_wrappedSocket.closeAfterWrite();
     }
 
+    @Override
     public Socket socket()
     {
         return m_wrappedSocket.socket();
     }
 
+    @Override
     public void close()
     {
         m_wrappedSocket.close();
     }
 
+    @Override
     public InetSocketAddress getAddress()
     {
         return m_wrappedSocket.getAddress();
     }
 
+    @Override
     public boolean isOpen()
     {
         return m_wrappedSocket.isOpen();
     }
 
+    @Override
     public String getIp()
     {
         return m_wrappedSocket.getIp();
     }
 
+    @Override
     public int getPort()
     {
         return m_wrappedSocket.getPort();
     }
 
+    @Override
     public Object getTag()
     {
         return m_wrappedSocket.getTag();
     }
 
-    public void setTag(Object tag)
+    @Override
+    public void setTag(final Object tag)
     {
         m_wrappedSocket.setTag(tag);
     }
 
-    void closeDueToSSLException(SSLException e)
+    void closeDueToSSLException(final SSLException e)
     {
         try
         {
@@ -192,7 +216,8 @@ class SSLSocketChannelResponder implements NIOSocketSSL, SocketObserver
         m_wrappedSocket.close();
     }
 
-    public void connectionOpened(NIOSocket nioSocket)
+    @Override
+    public void connectionOpened(final NIOSocket nioSocket)
     {
         try
         {
@@ -203,8 +228,9 @@ class SSLSocketChannelResponder implements NIOSocketSSL, SocketObserver
             m_nioService.notifyException(e);
         }
     }
-    
-    public void connectionBroken(NIOSocket nioSocket, Exception exception)
+
+    @Override
+    public void connectionBroken(final NIOSocket nioSocket, final Exception exception)
     {
         try
         {
@@ -216,7 +242,8 @@ class SSLSocketChannelResponder implements NIOSocketSSL, SocketObserver
         }
     }
 
-    public void packetReceived(NIOSocket socket, byte[] packet)
+    @Override
+    public void packetReceived(final NIOSocket socket, final byte[] packet)
     {
         try
         {
@@ -228,7 +255,8 @@ class SSLSocketChannelResponder implements NIOSocketSSL, SocketObserver
         }
     }
 
-    public void packetSent(NIOSocket socket, Object tag)
+    @Override
+    public void packetSent(final NIOSocket socket, final Object tag)
     {
         try
         {

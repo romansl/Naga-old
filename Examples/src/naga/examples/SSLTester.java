@@ -37,20 +37,22 @@ import javax.net.ssl.SSLException;
  */
 public class SSLTester
 {
-    public static void main(String... args)
+    public static void main(final String... args)
     {
         try
         {
-            NIOService service = new NIOService();
-            SSLEngine engine = SSLContext.getDefault().createSSLEngine();
-            NIOSocket socket = service.openSSLSocket(engine, "www.sslshopper.com", 443);
+            final NIOService service = new NIOService();
+            final SSLEngine engine = SSLContext.getDefault().createSSLEngine();
+            final NIOSocket socket = service.openSSLSocket(engine, "www.sslshopper.com", 443);
             socket.listen(new SocketObserver() {
-                public void packetSent(NIOSocket socket, Object tag)
+                @Override
+                public void packetSent(final NIOSocket socket, final Object tag)
                 {
                     System.out.println("Packet sent");
                 }
 
-                public void connectionOpened(NIOSocket nioSocket)
+                @Override
+                public void connectionOpened(final NIOSocket nioSocket)
                 {
                     try
                     {
@@ -64,14 +66,16 @@ public class SSLTester
                     nioSocket.write("GET /ssl-converter.html HTTP/1.0\r\n\r\n".getBytes());
                 }
 
-                public void connectionBroken(NIOSocket nioSocket, Exception exception)
+                @Override
+                public void connectionBroken(final NIOSocket nioSocket, final Exception exception)
                 {
                     System.out.println("*Connection broken");
                     if (exception != null) exception.printStackTrace();
                     System.exit(9);
                 }
 
-                public void packetReceived(NIOSocket socket, byte[] packet)
+                @Override
+                public void packetReceived(final NIOSocket socket, final byte[] packet)
                 {
                     System.out.println("*Unencrypted Packet received " + packet.length);
                     System.out.println(new String(packet));

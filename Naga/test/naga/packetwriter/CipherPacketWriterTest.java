@@ -18,13 +18,13 @@ public class CipherPacketWriterTest extends TestCase
 {
     CipherPacketWriter m_cipherPacketWriter;
 
-    byte[] merge(ByteBuffer[] buffers)
+    byte[] merge(final ByteBuffer[] buffers)
     {
-        byte[] total = new byte[(int)NIOUtils.remaining(buffers)];
+        final byte[] total = new byte[(int)NIOUtils.remaining(buffers)];
         int pos = 0;
-        for (ByteBuffer buffer : buffers)
+        for (final ByteBuffer buffer : buffers)
         {
-            int len = buffer.remaining();
+            final int len = buffer.remaining();
             buffer.get(total, pos, len);
             pos += len;
         }
@@ -33,10 +33,10 @@ public class CipherPacketWriterTest extends TestCase
 
     public void testWriteBlock() throws Exception
     {
-        Key key = new SecretKeySpec("1234567890ABCDEF".getBytes(), "AES");
-        Cipher encrypt = Cipher.getInstance("AES");
+        final Key key = new SecretKeySpec("1234567890ABCDEF".getBytes(), "AES");
+        final Cipher encrypt = Cipher.getInstance("AES");
         encrypt.init(Cipher.ENCRYPT_MODE, key);
-        Cipher decrypt = Cipher.getInstance("AES");
+        final Cipher decrypt = Cipher.getInstance("AES");
         decrypt.init(Cipher.DECRYPT_MODE, key);
         m_cipherPacketWriter = new CipherPacketWriter(encrypt, new RegularPacketWriter(1, true));
         ByteBuffer[] result = m_cipherPacketWriter.write(new ByteBuffer[] { ByteBuffer.wrap("ABC".getBytes()) });
@@ -47,10 +47,10 @@ public class CipherPacketWriterTest extends TestCase
 
     public void testWriteStream() throws Exception
     {
-        Key key = new SecretKeySpec("1234567890ABCDEF".getBytes(), "RC4");
-        Cipher encrypt = Cipher.getInstance("RC4");
+        final Key key = new SecretKeySpec("1234567890ABCDEF".getBytes(), "RC4");
+        final Cipher encrypt = Cipher.getInstance("RC4");
         encrypt.init(Cipher.ENCRYPT_MODE, key);
-        Cipher decrypt = Cipher.getInstance("RC4");
+        final Cipher decrypt = Cipher.getInstance("RC4");
         decrypt.init(Cipher.DECRYPT_MODE, key);
         m_cipherPacketWriter = new CipherPacketWriter(encrypt, new RegularPacketWriter(1, true));
         ByteBuffer[] result = m_cipherPacketWriter.write(new ByteBuffer[] { ByteBuffer.wrap("ABC".getBytes()) });

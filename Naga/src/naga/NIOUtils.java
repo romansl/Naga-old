@@ -35,14 +35,14 @@ public class NIOUtils
 {
 
 	NIOUtils() {}
-	
+
 	/**
 	 * Silently close both a key and a channel.
 	 *
 	 * @param key the key to cancel, may be null.
 	 * @param channel the channel to close, may be null.
 	 */
-	public static void closeKeyAndChannelSilently(SelectionKey key, Channel channel)
+	public static void closeKeyAndChannelSilently(final SelectionKey key, final Channel channel)
 	{
 		closeChannelSilently(channel);
 		cancelKeySilently(key);
@@ -58,7 +58,7 @@ public class NIOUtils
      * @param bigEndian if the encoding is big endian or not.
      * @throws IllegalArgumentException if the value is out of range for the given header size.
      */
-    public static void setPacketSizeInByteBuffer(ByteBuffer byteBuffer, int headerSize, int valueToEncode, boolean bigEndian)
+    public static void setPacketSizeInByteBuffer(final ByteBuffer byteBuffer, final int headerSize, final int valueToEncode, final boolean bigEndian)
     {
         if (valueToEncode < 0) throw new IllegalArgumentException("Payload size is less than 0.");
         // If header size is 4, we get valueToEncode >> 32, which is defined as valueToEncode >> 0 for int.
@@ -69,7 +69,7 @@ public class NIOUtils
         }
         for (int i = 0; i < headerSize; i++)
         {
-            int index = bigEndian ? (headerSize - 1 - i) : i;
+            final int index = bigEndian ? (headerSize - 1 - i) : i;
             // We do not need to extend valueToEncode here, since the maximum is valueToEncode >> 24
             byteBuffer.put((byte) (valueToEncode >> (8 * index) & 0xFF));
         }
@@ -85,7 +85,7 @@ public class NIOUtils
 	 * @param bigEndian if the encoding is big endian or not.
 	 * @throws IllegalArgumentException if the value is out of range for the given header size.
 	 */
-	public static void setHeaderForPacketSize(byte[] buffer, int headerSize, int valueToEncode, boolean bigEndian)
+	public static void setHeaderForPacketSize(final byte[] buffer, final int headerSize, final int valueToEncode, final boolean bigEndian)
 	{
 		if (valueToEncode < 0) throw new IllegalArgumentException("Payload size is less than 0.");
         // If header size is 4, we get valueToEncode >> 32, which is defined as valueToEncode >> 0 for int.
@@ -96,7 +96,7 @@ public class NIOUtils
         }
         for (int i = 0; i < headerSize; i++)
 		{
-			int index = bigEndian ? (headerSize - 1 - i) : i;
+			final int index = bigEndian ? (headerSize - 1 - i) : i;
             // We do not need to extend valueToEncode here, since the maximum is valueToEncode >> 24
 			buffer[i] = ((byte) (valueToEncode >> (8 * index) & 0xFF));
 		}
@@ -113,7 +113,7 @@ public class NIOUtils
 	 * @param bigEndian if the encoding is big endian or not.
 	 * @return the decoded number.
 	 */
-	public static int getPacketSizeFromByteBuffer(ByteBuffer header, int size, boolean bigEndian)
+	public static int getPacketSizeFromByteBuffer(final ByteBuffer header, final int size, final boolean bigEndian)
 	{
 		long packetSize = 0;
 		if (bigEndian)
@@ -148,7 +148,7 @@ public class NIOUtils
      * @param bigEndian if the encoding is big endian or not.
      * @return the decoded number.
      */
-    public static int getPacketSizeFromByteArray(byte[] data, int length, boolean bigEndian)
+    public static int getPacketSizeFromByteArray(final byte[] data, final int length, final boolean bigEndian)
     {
         long packetSize = 0;
         if (bigEndian)
@@ -177,7 +177,7 @@ public class NIOUtils
 	 *
 	 * @param channel the channel to close, may be null.
 	 */
-	public static void closeChannelSilently(Channel channel)
+	public static void closeChannelSilently(final Channel channel)
 	{
 		try
 		{
@@ -197,7 +197,7 @@ public class NIOUtils
 	 *
 	 * @param key the key to cancel, may be null.
 	 */
-	public static void cancelKeySilently(SelectionKey key)
+	public static void cancelKeySilently(final SelectionKey key)
 	{
 		try
 		{
@@ -215,14 +215,14 @@ public class NIOUtils
      * @param buffers the buffers to compact.
      * @return a compacted ByteBuffer array.
      */
-    public static ByteBuffer[] compact(ByteBuffer[] buffers)
+    public static ByteBuffer[] compact(final ByteBuffer[] buffers)
     {
         for (int i = 0; i < buffers.length; i++)
         {
             if (buffers[i].remaining() > 0)
             {
                 if (i == 0) return buffers;
-                ByteBuffer[] newBuffers = new ByteBuffer[buffers.length - i];
+                final ByteBuffer[] newBuffers = new ByteBuffer[buffers.length - i];
                 System.arraycopy(buffers, i, newBuffers, 0, buffers.length - i);
                 return newBuffers;
             }
@@ -230,56 +230,56 @@ public class NIOUtils
         return null;
     }
 
-    public static ByteBuffer[] concat(ByteBuffer[] buffers, ByteBuffer buffer)
+    public static ByteBuffer[] concat(final ByteBuffer[] buffers, final ByteBuffer buffer)
     {
         return concat(buffers, new ByteBuffer[] { buffer });
     }
 
-    public static ByteBuffer[] concat(ByteBuffer buffer, ByteBuffer[] buffers2)
+    public static ByteBuffer[] concat(final ByteBuffer buffer, final ByteBuffer[] buffers2)
     {
         return concat(new ByteBuffer[] { buffer }, buffers2);
     }
 
-    public static ByteBuffer[] concat(ByteBuffer[] buffers1, ByteBuffer[] buffers2)
+    public static ByteBuffer[] concat(final ByteBuffer[] buffers1, final ByteBuffer[] buffers2)
     {
         if (buffers1 == null || buffers1.length == 0) return buffers2;
         if (buffers2 == null || buffers2.length == 0) return buffers1;
-        ByteBuffer[] newBuffers = new ByteBuffer[buffers1.length + buffers2.length];
+        final ByteBuffer[] newBuffers = new ByteBuffer[buffers1.length + buffers2.length];
         System.arraycopy(buffers1, 0, newBuffers, 0, buffers1.length);
         System.arraycopy(buffers2, 0, newBuffers, buffers1.length, buffers2.length);
         return newBuffers;
     }
 
-    public static ByteBuffer copy(ByteBuffer buffer)
+    public static ByteBuffer copy(final ByteBuffer buffer)
     {
         if (buffer == null) return null;
-        ByteBuffer copy = ByteBuffer.allocate(buffer.remaining());
+        final ByteBuffer copy = ByteBuffer.allocate(buffer.remaining());
         copy.put(buffer);
         copy.flip();
         return copy;
     }
 
-    public static long remaining(ByteBuffer[] byteBuffers)
+    public static long remaining(final ByteBuffer[] byteBuffers)
     {
         long length = 0;
-        for (ByteBuffer buffer : byteBuffers) length += buffer.remaining();
+        for (final ByteBuffer buffer : byteBuffers) length += buffer.remaining();
         return length;
     }
 
-    public static boolean isEmpty(ByteBuffer[] byteBuffers)
+    public static boolean isEmpty(final ByteBuffer[] byteBuffers)
     {
-        for (ByteBuffer buffer : byteBuffers)
+        for (final ByteBuffer buffer : byteBuffers)
         {
             if (buffer.remaining() > 0) return false;
         }
         return true;
     }
 
-    public static ByteBuffer join(ByteBuffer buffer1, ByteBuffer buffer2)
+    public static ByteBuffer join(final ByteBuffer buffer1, final ByteBuffer buffer2)
     {
         if (buffer2 == null || buffer2.remaining() == 0) return NIOUtils.copy(buffer1);
         if (buffer1 == null || buffer1.remaining() == 0) return NIOUtils.copy(buffer2);
-        ByteBuffer buffer = ByteBuffer.allocate(buffer1.remaining() + buffer2.remaining());
+        final ByteBuffer buffer = ByteBuffer.allocate(buffer1.remaining() + buffer2.remaining());
         buffer.put(buffer1);
         buffer.put(buffer2);
         buffer.flip();

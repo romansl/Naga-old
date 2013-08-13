@@ -32,7 +32,7 @@ import java.net.InetSocketAddress;
  * in most cases it is enough to use the ConnectorAcceptor.ALLOW which
  * accepts all incoming connections.
  * <p>
- * Note that a NIOServerSocket defaults to the ConnectorAcceptor.ALLOW 
+ * Note that a NIOServerSocket defaults to the ConnectorAcceptor.ALLOW
  * acceptor when it is created.
  *
  *
@@ -45,7 +45,8 @@ public interface ConnectionAcceptor
 	 */
 	ConnectionAcceptor DENY = new ConnectionAcceptor()
 	{
-		public boolean acceptConnection(InetSocketAddress address)
+		@Override
+        public boolean acceptConnection(final InetSocketAddress address)
 		{
 			return false;
 		}
@@ -56,7 +57,8 @@ public interface ConnectionAcceptor
 	 */
 	ConnectionAcceptor ALLOW = new ConnectionAcceptor()
 	{
-		public boolean acceptConnection(InetSocketAddress address)
+		@Override
+        public boolean acceptConnection(final InetSocketAddress address)
 		{
 			return true;
 		}
@@ -70,7 +72,7 @@ public interface ConnectionAcceptor
 	 * For this reason it is recommended that this method should return fairly quickly
 	 * (i.e. don't make reverse ip lookups or similar - potentially very slow - calls).
 	 * </b>
-	 * 
+	 *
 	 * @param inetSocketAddress the adress the connection came from.
 	 * @return true to accept, false to refuse.
 	 */

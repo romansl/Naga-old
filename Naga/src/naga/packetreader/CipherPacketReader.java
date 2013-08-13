@@ -45,7 +45,7 @@ public class CipherPacketReader implements PacketReader
      * @param cipher the cipher to use.
      * @param reader the underlying packet reader we wish to employ.
      */
-    public CipherPacketReader(Cipher cipher, PacketReader reader)
+    public CipherPacketReader(final Cipher cipher, final PacketReader reader)
     {
         m_cipher = cipher;
         m_reader = reader;
@@ -56,12 +56,13 @@ public class CipherPacketReader implements PacketReader
         return m_reader;
     }
 
-    public void setReader(PacketReader reader)
+    public void setReader(final PacketReader reader)
     {
         m_reader = reader;
     }
 
-    public byte[] nextPacket(ByteBuffer byteBuffer) throws ProtocolViolationException
+    @Override
+    public byte[] nextPacket(final ByteBuffer byteBuffer) throws ProtocolViolationException
     {
         if (m_internalBuffer == null)
         {
@@ -74,7 +75,7 @@ public class CipherPacketReader implements PacketReader
             if (byteBuffer.remaining() > 0)
             {
                 // Allocate enough memory to hold the new and the already decrypted data.
-                ByteBuffer newBuffer = ByteBuffer.allocate(m_cipher.getOutputSize(byteBuffer.remaining()) + m_internalBuffer.remaining());
+                final ByteBuffer newBuffer = ByteBuffer.allocate(m_cipher.getOutputSize(byteBuffer.remaining()) + m_internalBuffer.remaining());
 
                 // Move the decrypted data to front.
                 newBuffer.put(m_internalBuffer);
@@ -99,7 +100,7 @@ public class CipherPacketReader implements PacketReader
             m_internalBuffer.flip();
         }
 
-        byte[] packet = m_reader.nextPacket(m_internalBuffer);
+        final byte[] packet = m_reader.nextPacket(m_internalBuffer);
         if (m_internalBuffer.remaining() == 0) m_internalBuffer = null;
         return packet;
     }

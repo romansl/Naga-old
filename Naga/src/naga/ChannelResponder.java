@@ -54,7 +54,7 @@ abstract class ChannelResponder implements NIOAbstractSocket
 	 * @param channel the channel handled by this responder.
 	 * @param address the address this channel is associated with.
 	 */
-	protected ChannelResponder(NIOService service, SelectableChannel channel, InetSocketAddress address)
+	protected ChannelResponder(final NIOService service, final SelectableChannel channel, final InetSocketAddress address)
 	{
 		m_channel = channel;
 		m_service = service;
@@ -69,26 +69,31 @@ abstract class ChannelResponder implements NIOAbstractSocket
 	}
 
 
-	public InetSocketAddress getAddress()
+	@Override
+    public InetSocketAddress getAddress()
 	{
 		return m_address;
 	}
 
-	public String getIp()
+	@Override
+    public String getIp()
 	{
 		return m_ip;
 	}
 
-	public int getPort()
+	@Override
+    public int getPort()
 	{
 		return m_port;
 	}
 
-    public void setTag(Object tag)
+    @Override
+    public void setTag(final Object tag)
     {
         m_tag = tag;
     }
 
+    @Override
     public Object getTag()
     {
         return m_tag;
@@ -171,7 +176,7 @@ abstract class ChannelResponder implements NIOAbstractSocket
 	 * @param key the selection key for this responder.
 	 * @throws IllegalStateException if the selection key already is set.
 	 */
-	void setKey(SelectionKey key)
+	void setKey(final SelectionKey key)
 	{
 		if (m_key != null) throw new IllegalStateException("Tried to set selection key twice");
 		m_key = key;
@@ -204,12 +209,14 @@ abstract class ChannelResponder implements NIOAbstractSocket
 	 */
 	abstract void keyInitialized();
 
-	public boolean isOpen()
+	@Override
+    public boolean isOpen()
 	{
 		return m_open;
 	}
 
-	public void close()
+	@Override
+    public void close()
 	{
 		close(null);
 	}
@@ -220,7 +227,7 @@ abstract class ChannelResponder implements NIOAbstractSocket
 	 * @param exception the exception that caused the close, or null if this was
 	 * closed by the user of this responder.
 	 */
-	protected void close(Exception exception)
+	protected void close(final Exception exception)
 	{
 		if (isOpen())
 		{
@@ -240,7 +247,7 @@ abstract class ChannelResponder implements NIOAbstractSocket
 		{
 			try
 			{
-				int oldOps = m_key.interestOps();
+				final int oldOps = m_key.interestOps();
 				if ((m_interestOps & SelectionKey.OP_CONNECT) != 0)
 				{
 					m_key.interestOps(SelectionKey.OP_CONNECT);
@@ -268,9 +275,9 @@ abstract class ChannelResponder implements NIOAbstractSocket
 	 *
 	 * @param interest the interest to delete.
 	 */
-	protected void deleteInterest(int interest)
+	protected void deleteInterest(final int interest)
 	{
-		m_interestOps = m_interestOps & ~interest;
+        m_interestOps &= ~interest;
 		synchronizeKeyInterestOps();
 	}
 
@@ -281,7 +288,7 @@ abstract class ChannelResponder implements NIOAbstractSocket
 	 *
 	 * @param interest the interest to add.
 	 */
-	protected void addInterest(int interest)
+	protected void addInterest(final int interest)
 	{
 		m_interestOps |= interest;
 		synchronizeKeyInterestOps();
@@ -323,13 +330,14 @@ abstract class ChannelResponder implements NIOAbstractSocket
 		private final ChannelResponder m_responder;
 		private final Exception m_exception;
 
-		private CloseEvent(ChannelResponder responder, Exception e)
+		private CloseEvent(final ChannelResponder responder, final Exception e)
 		{
 			m_responder = responder;
 			m_exception = e;
 		}
 
-		public void run()
+		@Override
+        public void run()
 		{
 			if (m_responder.isOpen())
 			{
@@ -339,8 +347,4 @@ abstract class ChannelResponder implements NIOAbstractSocket
 			}
 		}
 	}
-
-
-
-
 }

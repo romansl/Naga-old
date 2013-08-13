@@ -37,7 +37,7 @@ public class ProtocolViolationException extends IOException
 	 *
 	 * @param message exception message.
 	 */
-	public ProtocolViolationException(String message)
+	public ProtocolViolationException(final String message)
 	{
 		super(message);
 	}

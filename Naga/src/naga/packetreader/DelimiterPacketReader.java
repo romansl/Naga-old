@@ -40,14 +40,14 @@ import java.nio.ByteBuffer;
 public class DelimiterPacketReader implements PacketReader
 {
 	private volatile int m_maxPacketSize;
-	private byte m_delimiter;
+	private final byte m_delimiter;
 
 	/**
 	 * Create a new reader with the default min buffer size and unlimited max buffer size.
 	 *
 	 * @param delimiter the byte delimiter to use.
 	 */
-	public DelimiterPacketReader(byte delimiter)
+	public DelimiterPacketReader(final byte delimiter)
 	{
 		this(delimiter, -1);
 	}
@@ -61,7 +61,7 @@ public class DelimiterPacketReader implements PacketReader
 	 * IOException. -1 means the packet has no size limit.
 	 * @throws IllegalArgumentException if maxPacketSize < 1
 	 */
-	public DelimiterPacketReader(byte delimiter, int maxPacketSize)
+	public DelimiterPacketReader(final byte delimiter, final int maxPacketSize)
 	{
 		if (maxPacketSize < 1 && maxPacketSize != -1)
 		{
@@ -89,22 +89,23 @@ public class DelimiterPacketReader implements PacketReader
 	 *
 	 * @param maxPacketSize the new maximum packet size.
 	 */
-	public void setMaxPacketSize(int maxPacketSize)
+	public void setMaxPacketSize(final int maxPacketSize)
 	{
 		m_maxPacketSize = maxPacketSize;
 	}
 
+    @Override
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
-    public byte[] nextPacket(ByteBuffer byteBuffer) throws ProtocolViolationException
+    public byte[] nextPacket(final ByteBuffer byteBuffer) throws ProtocolViolationException
     {
         byteBuffer.mark();
         int bytesRead = 0;
         while (byteBuffer.remaining() > 0)
         {
-            int ch = byteBuffer.get();
+            final int ch = byteBuffer.get();
             if (ch == m_delimiter)
             {
-                byte[] packet = new byte[bytesRead];
+                final byte[] packet = new byte[bytesRead];
                 byteBuffer.reset();
                 byteBuffer.get(packet);
                 byteBuffer.get();

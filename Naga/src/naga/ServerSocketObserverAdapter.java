@@ -25,21 +25,24 @@ import java.io.IOException;
 
 /**
  * Class with null-implementations for all callbacks.
- * 
+ *
  * @author Christoffer Lerno
  */
 public class ServerSocketObserverAdapter implements ServerSocketObserver
 {
 
-	public void acceptFailed(IOException exception)
+	@Override
+    public void acceptFailed(final IOException exception)
 	{
 	}
 
-	public void serverSocketDied(Exception e)
+	@Override
+    public void serverSocketDied(final Exception e)
 	{
 	}
 
-	public void newConnection(NIOSocket nioSocket)
+	@Override
+    public void newConnection(final NIOSocket nioSocket)
 	{
 	}
 }

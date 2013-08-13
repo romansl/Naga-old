@@ -1,6 +1,6 @@
 package naga;
 /**
- * @author Christoffer Lerno 
+ * @author Christoffer Lerno
  */
 
 import junit.framework.TestCase;
@@ -13,14 +13,15 @@ public class NIOServiceTest extends TestCase
 {
 	NIOService m_service;
 
-	public void setUp() throws IOException
+	@Override
+    public void setUp() throws IOException
 	{
 		m_service = new NIOService();
 	}
 
 	public void testOpenServerSocket() throws Exception
 	{
-		ConnectionAcceptor acceptor = EasyMock.createMock(ConnectionAcceptor.class);
+		final ConnectionAcceptor acceptor = EasyMock.createMock(ConnectionAcceptor.class);
 
 		EasyMock.expect(acceptor.acceptConnection((InetSocketAddress) EasyMock.anyObject())).andReturn(true).once();
 		EasyMock.replay(acceptor);
@@ -28,9 +29,10 @@ public class NIOServiceTest extends TestCase
 		final SocketObserver socketObserverClient = EasyMock.createMock(SocketObserver.class);
 		final SocketObserver socketObserverServer = EasyMock.createMock(SocketObserver.class);
 
-		ServerSocketObserver serverSocketObserver = new ServerSocketObserverAdapter()
+		final ServerSocketObserver serverSocketObserver = new ServerSocketObserverAdapter()
 		{
-			public void newConnection(NIOSocket nioSocket)
+			@Override
+            public void newConnection(final NIOSocket nioSocket)
 			{
 				nioSocket.listen(socketObserverServer);
 			}
@@ -44,8 +46,8 @@ public class NIOServiceTest extends TestCase
 		EasyMock.replay(socketObserverClient);
 		EasyMock.replay(socketObserverServer);
 
-		NIOServerSocket serverSocket = m_service.openServerSocket(new InetSocketAddress(3133), 0);
-		NIOSocket socket = m_service.openSocket("localhost", 3133);
+		final NIOServerSocket serverSocket = m_service.openServerSocket(new InetSocketAddress(3133), 0);
+		final NIOSocket socket = m_service.openSocket("localhost", 3133);
 		socket.listen(socketObserverClient);
 		serverSocket.listen(serverSocketObserver);
 		serverSocket.setConnectionAcceptor(acceptor);
@@ -62,28 +64,28 @@ public class NIOServiceTest extends TestCase
 		assertEquals(1, serverSocket.getTotalConnections());
 		assertEquals(1, serverSocket.getTotalAcceptedConnections());
 	}
-	
+
 	public void testAcceptRefused() throws Exception
 	{
-		ConnectionAcceptor acceptor = EasyMock.createMock(ConnectionAcceptor.class);
+		final ConnectionAcceptor acceptor = EasyMock.createMock(ConnectionAcceptor.class);
 
 		EasyMock.expect(acceptor.acceptConnection((InetSocketAddress) EasyMock.anyObject())).andReturn(false).once();
 		EasyMock.replay(acceptor);
 
-		ServerSocketObserver serverSocketObserver = EasyMock.createMock(ServerSocketObserver.class);
+		final ServerSocketObserver serverSocketObserver = EasyMock.createMock(ServerSocketObserver.class);
 		EasyMock.replay(serverSocketObserver);
 
-		SocketObserver socketOwnerClientSide = EasyMock.createMock(SocketObserver.class);
+		final SocketObserver socketOwnerClientSide = EasyMock.createMock(SocketObserver.class);
 		socketOwnerClientSide.connectionOpened((NIOSocket) EasyMock.anyObject());
 		EasyMock.expectLastCall().once();
 		socketOwnerClientSide.connectionBroken((NIOSocket) EasyMock.anyObject(), (Exception) EasyMock.anyObject());
 		EasyMock.expectLastCall().once();
 		EasyMock.replay(socketOwnerClientSide);
 
-		NIOServerSocket serverSocket = m_service.openServerSocket(new InetSocketAddress(3134), 0);
+		final NIOServerSocket serverSocket = m_service.openServerSocket(new InetSocketAddress(3134), 0);
 		serverSocket.setConnectionAcceptor(acceptor);
 		serverSocket.listen(serverSocketObserver);
-		NIOSocket socket = m_service.openSocket("localhost", 3134);
+		final NIOSocket socket = m_service.openSocket("localhost", 3134);
 		socket.listen(socketOwnerClientSide);
 
 		while (socket.isOpen())

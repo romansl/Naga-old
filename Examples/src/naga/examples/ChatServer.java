@@ -42,42 +42,45 @@ public class ChatServer implements ServerSocketObserver
 {
     private final EventMachine m_eventMachine;
     private final List<User> m_users;
-	ChatServer(EventMachine machine)
+	ChatServer(final EventMachine machine)
 	{
         m_eventMachine = machine;
         m_users = new ArrayList<User>();
     }
 
-    public void acceptFailed(IOException exception)
+    @Override
+    public void acceptFailed(final IOException exception)
     {
         System.out.println("Failed to accept connection: " + exception);
     }
 
-    public void serverSocketDied(Exception exception)
+    @Override
+    public void serverSocketDied(final Exception exception)
     {
         // If the server socket dies, we could possibly try to open a new socket.
         System.out.println("Server socket died.");
         System.exit(-1);
     }
 
-    public void newConnection(NIOSocket nioSocket)
+    @Override
+    public void newConnection(final NIOSocket nioSocket)
     {
         // Create a new user to hande the new connection.
         System.out.println("New user connected from " + nioSocket.getIp() + ".");
         m_users.add(new User(this, nioSocket));
     }
 
-    private void removeUser(User user)
+    private void removeUser(final User user)
     {
         System.out.println("Removing user " + user + ".");
         m_users.remove(user);
     }
 
-    public void broadcast(User sender, String string)
+    public void broadcast(final User sender, final String string)
     {
         // We convert the packet, then send it to all users except the sender.
-        byte[] bytesToSend = string.getBytes();
-        for (User user : m_users)
+        final byte[] bytesToSend = string.getBytes();
+        for (final User user : m_users)
         {
             if (user != sender) user.sendBroadcast(bytesToSend);
         }
@@ -88,13 +91,13 @@ public class ChatServer implements ServerSocketObserver
 	 *
 	 * @param args command line arguments, assumed to be a 1 length string containing a port.
 	 */
-	public static void main(String... args)
+	public static void main(final String... args)
 	{
-		int port = Integer.parseInt(args[0]);
+		final int port = Integer.parseInt(args[0]);
 		try
 		{
-            EventMachine machine = new EventMachine();
-			NIOServerSocket socket = machine.getNIOService().openServerSocket(port);
+            final EventMachine machine = new EventMachine();
+			final NIOServerSocket socket = machine.getNIOService().openServerSocket(port);
 			socket.listen(new ChatServer(machine));
 			socket.setConnectionAcceptor(ConnectionAcceptor.ALLOW);
             machine.start();
@@ -118,7 +121,7 @@ public class ChatServer implements ServerSocketObserver
         private final NIOSocket m_socket;
         private String m_name;
         private DelayedEvent m_disconnectEvent;
-        private User(ChatServer server, NIOSocket socket)
+        private User(final ChatServer server, final NIOSocket socket)
         {
             m_server = server;
             m_socket = socket;
@@ -128,11 +131,13 @@ public class ChatServer implements ServerSocketObserver
             m_name = null;
         }
 
-        public void connectionOpened(NIOSocket nioSocket)
+        @Override
+        public void connectionOpened(final NIOSocket nioSocket)
         {
             // We start by scheduling a disconnect event for the login.
             m_disconnectEvent = m_server.getEventMachine().executeLater(new Runnable()
             {
+                @Override
                 public void run()
                 {
                     m_socket.write("Disconnecting due to inactivity".getBytes());
@@ -149,7 +154,8 @@ public class ChatServer implements ServerSocketObserver
             return m_name != null ? m_name + "@" + m_socket.getIp() : "anon@" + m_socket.getIp();
         }
 
-        public void connectionBroken(NIOSocket nioSocket, Exception exception)
+        @Override
+        public void connectionBroken(final NIOSocket nioSocket, final Exception exception)
         {
             // Inform the other users if the user was logged in.
             if (m_name != null)
@@ -166,6 +172,7 @@ public class ChatServer implements ServerSocketObserver
             if (m_disconnectEvent != null) m_disconnectEvent.cancel();
             m_disconnectEvent = m_server.getEventMachine().executeLater(new Runnable()
             {
+                @Override
                 public void run()
                 {
                     m_socket.write("Disconnected due to inactivity.".getBytes());
@@ -174,10 +181,11 @@ public class ChatServer implements ServerSocketObserver
             }, INACTIVITY_TIMEOUT);
         }
 
-        public void packetReceived(NIOSocket socket, byte[] packet)
+        @Override
+        public void packetReceived(final NIOSocket socket, final byte[] packet)
         {
             // Create the string. For real life scenarios, you'd handle exceptions here.
-            String message = new String(packet).trim();
+            final String message = new String(packet).trim();
 
             // Ignore empty lines
             if (message.length() == 0) return;
@@ -198,12 +206,13 @@ public class ChatServer implements ServerSocketObserver
             m_server.broadcast(this, m_name + ": " + message);
         }
 
-        public void packetSent(NIOSocket socket, Object tag)
+        @Override
+        public void packetSent(final NIOSocket socket, final Object tag)
         {
             // No need to handle this case.
         }
 
-        public void sendBroadcast(byte[] bytesToSend)
+        public void sendBroadcast(final byte[] bytesToSend)
         {
             // Only send broadcast to users logged in.
             if (m_name != null)

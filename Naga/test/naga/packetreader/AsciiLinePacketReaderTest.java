@@ -1,6 +1,6 @@
 package naga.packetreader;
 /**
- * @author Christoffer Lerno 
+ * @author Christoffer Lerno
  */
 
 import junit.framework.TestCase;
@@ -16,7 +16,7 @@ public class AsciiLinePacketReaderTest extends TestCase
 	public void testAsciiLinePacketReader() throws Exception
 	{
 		m_asciiLinePacketReader = new AsciiLinePacketReader();
-		byte[] notALine = "Foo".getBytes();
+		final byte[] notALine = "Foo".getBytes();
         ByteBuffer byteBuffer = ByteBuffer.wrap(notALine);
         assertEquals(3, byteBuffer.remaining());
         assertEquals(null, m_asciiLinePacketReader.nextPacket(byteBuffer));

@@ -41,9 +41,10 @@ public class RawPacketReader implements PacketReader
     {
     }
 
-    public byte[] nextPacket(ByteBuffer byteBuffer) throws ProtocolViolationException
+    @Override
+    public byte[] nextPacket(final ByteBuffer byteBuffer) throws ProtocolViolationException
     {
-        byte[] packet = new byte[byteBuffer.remaining()];
+        final byte[] packet = new byte[byteBuffer.remaining()];
         byteBuffer.get(packet);
         return packet;
     }

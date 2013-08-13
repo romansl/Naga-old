@@ -39,26 +39,27 @@ public class Rot13Server
 {
 	Rot13Server()
 	{}
-	
+
 	/**
 	 * Runs the rot13 server.
 	 *
 	 * @param args command line arguments, assumed to be a 1 length string containing a port.
 	 */
-	public static void main(String... args)
+	public static void main(final String... args)
 	{
-		int port = Integer.parseInt(args[0]);
+		final int port = Integer.parseInt(args[0]);
 		try
 		{
 			// Open the service.
-			NIOService service = new NIOService();
-			NIOServerSocket socket = service.openServerSocket(port);
+			final NIOService service = new NIOService();
+			final NIOServerSocket socket = service.openServerSocket(port);
 			final byte[] welcomeMessage = ("Welcome to the ROT13 server at " + socket.toString() + "!").getBytes();
 
 			// Start listening to the server socket.
 			socket.listen(new ServerSocketObserverAdapter()
 			{
-				public void newConnection(NIOSocket nioSocket)
+				@Override
+                public void newConnection(final NIOSocket nioSocket)
 				{
 					System.out.println("Client " + nioSocket.getIp() + " connected.");
 					nioSocket.setPacketReader(new AsciiLinePacketReader());
@@ -66,10 +67,11 @@ public class Rot13Server
                     nioSocket.write(welcomeMessage);
 					nioSocket.listen(new SocketObserverAdapter()
 					{
-						public void packetReceived(NIOSocket socket, byte[] packet)
+						@Override
+                        public void packetReceived(final NIOSocket socket, final byte[] packet)
 						{
 							// Convert the packet to a string and trim non-printables.
-							String line = new String(packet).trim();
+							final String line = new String(packet).trim();
 
 							// Disconnect on "+++"
 							if (line.equals("+++"))
@@ -80,10 +82,10 @@ public class Rot13Server
 							}
 
 							// Build our ROT13 version of the incoming string.
-							StringBuilder builder = new StringBuilder(line);
+							final StringBuilder builder = new StringBuilder(line);
 							for (int i = 0; i < builder.length(); i++)
 							{
-								char c = builder.charAt(i);
+								final char c = builder.charAt(i);
 								if (c >= 'a' && c <= 'z')
 								{
 									builder.setCharAt(i, (char) (((c - 'a') + 13) % 26 + 'a'));
@@ -98,7 +100,8 @@ public class Rot13Server
 							socket.write(builder.toString().getBytes());
 						}
 
-						public void connectionBroken(NIOSocket nioSocket, Exception exception)
+						@Override
+                        public void connectionBroken(final NIOSocket nioSocket, final Exception exception)
 						{
 							System.out.println("Client " + nioSocket.getIp() + " disconnected.");
 							if (exception != null)

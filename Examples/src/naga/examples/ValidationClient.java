@@ -48,20 +48,20 @@ public class ValidationClient
 	 *
 	 * @param args assumed to be 4 strings representing host, port, account and password.
 	 */
-	public static void main(String... args)
+	public static void main(final String... args)
 	{
 		try
 		{
 			// Parse arguments.
-			String host = args[0];
-			int port = Integer.parseInt(args[1]);
-			String account = args[2];
-			String password = args[3];
+			final String host = args[0];
+			final int port = Integer.parseInt(args[1]);
+			final String account = args[2];
+			final String password = args[3];
 
 			// Prepare the login packet, packing two UTF strings together
 			// using a data output stream.
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			DataOutputStream dataStream = new DataOutputStream(stream);
+			final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			final DataOutputStream dataStream = new DataOutputStream(stream);
 			dataStream.writeUTF(account);
 			dataStream.writeUTF(password);
 			dataStream.flush();
@@ -69,10 +69,10 @@ public class ValidationClient
 			dataStream.close();
 
 			// Start up the service.
-			NIOService service = new NIOService();
+			final NIOService service = new NIOService();
 
 			// Open our socket.
-			NIOSocket socket = service.openSocket(host, port);
+			final NIOSocket socket = service.openSocket(host, port);
 
 			// Use regular 1 byte header reader/writer
 			socket.setPacketReader(new RegularPacketReader(1, true));
@@ -81,23 +81,26 @@ public class ValidationClient
 			// Start listening to the socket.
 			socket.listen(new SocketObserver()
 			{
-				public void connectionOpened(NIOSocket nioSocket)
+				@Override
+                public void connectionOpened(final NIOSocket nioSocket)
 				{
 					System.out.println("Sending login...");
 					nioSocket.write(content);
 				}
 
-                public void packetSent(NIOSocket socket, Object tag)
+                @Override
+                public void packetSent(final NIOSocket socket, final Object tag)
                 {
                     System.out.println("Packet sent");
                 }
 
-                public void packetReceived(NIOSocket socket, byte[] packet)
+                @Override
+                public void packetReceived(final NIOSocket socket, final byte[] packet)
 				{
 					try
 					{
 						// Read the UTF-reply and print it.
-						String reply = new DataInputStream(new ByteArrayInputStream(packet)).readUTF();
+						final String reply = new DataInputStream(new ByteArrayInputStream(packet)).readUTF();
 						System.out.println("Reply was: " + reply);
 						// Exit the program.
 						System.exit(0);
@@ -108,7 +111,8 @@ public class ValidationClient
 					}
 				}
 
-				public void connectionBroken(NIOSocket nioSocket, Exception exception)
+				@Override
+                public void connectionBroken(final NIOSocket nioSocket, final Exception exception)
 				{
 					System.out.println("Connection failed.");
 					// Exit the program.

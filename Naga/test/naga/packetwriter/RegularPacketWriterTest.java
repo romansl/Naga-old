@@ -1,6 +1,6 @@
 package naga.packetwriter;
 /**
- * @author Christoffer Lerno 
+ * @author Christoffer Lerno
  */
 
 import junit.framework.TestCase;
@@ -15,7 +15,7 @@ public class RegularPacketWriterTest extends TestCase
 	public void testRegularPacketWriter() throws Exception
 	{
 		m_regularPacketWriter = new RegularPacketWriter(3, true);
-        ByteBuffer[] result = m_regularPacketWriter.write(new ByteBuffer[] { ByteBuffer.wrap("Foo!".getBytes()) });
+        final ByteBuffer[] result = m_regularPacketWriter.write(new ByteBuffer[] { ByteBuffer.wrap("Foo!".getBytes()) });
         assertEquals("[0, 0, 4]", Arrays.toString(result[0].array()));
         assertEquals("[70, 111, 111, 33]", Arrays.toString(result[1].array()));
         assertEquals(2, result.length);
@@ -26,7 +26,7 @@ public class RegularPacketWriterTest extends TestCase
     public void testFourByteHeader() throws Exception
     {
         m_regularPacketWriter = new RegularPacketWriter(4, true);
-        ByteBuffer[] result =  m_regularPacketWriter.write(new ByteBuffer[] { ByteBuffer.wrap("Foo!".getBytes()) });
+        final ByteBuffer[] result =  m_regularPacketWriter.write(new ByteBuffer[] { ByteBuffer.wrap("Foo!".getBytes()) });
         assertEquals("[0, 0, 0, 4]", Arrays.toString(result[0].array()));
         assertEquals("[70, 111, 111, 33]", Arrays.toString(result[1].array()));
         assertEquals(2, result.length);

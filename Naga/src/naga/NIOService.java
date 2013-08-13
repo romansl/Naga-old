@@ -95,7 +95,7 @@ public class NIOService
      * service.
      * @throws IllegalArgumentException if the buffer size is less than 256 bytes.
      */
-    public NIOService(int ioBufferSize) throws IOException
+    public NIOService(final int ioBufferSize) throws IOException
 	{
 		m_selector = Selector.open();
 		m_internalEventQueue = new ConcurrentLinkedQueue<Runnable>();
@@ -150,7 +150,7 @@ public class NIOService
      * @throws ClosedSelectorException if the underlying selector is closed.
 	 * (in this case, NIOService#isOpen will return false)
 	 */
-	public synchronized void selectBlocking(long timeout) throws IOException
+	public synchronized void selectBlocking(final long timeout) throws IOException
 	{
 		executeQueue();
 		if (m_selector.select(timeout) > 0)
@@ -173,7 +173,7 @@ public class NIOService
 	 * @return a NIOSocket object for asynchronous communication.
 	 * @throws IOException if registering the new socket failed.
 	 */
-	public NIOSocket openSocket(String host, int port) throws IOException
+	public NIOSocket openSocket(final String host, final int port) throws IOException
 	{
 		return openSocket(InetAddress.getByName(host), port);
 	}
@@ -192,7 +192,7 @@ public class NIOService
      * @return a NIOSocket object for asynchronous communication.
      * @throws IOException if registering the new socket failed.
      */
-    public NIOSocket openSSLSocket(SSLEngine sslEngine, String host, int port) throws IOException
+    public NIOSocket openSSLSocket(final SSLEngine sslEngine, final String host, final int port) throws IOException
     {
         return openSSLSocket(sslEngine, InetAddress.getByName(host), port);
     }
@@ -210,11 +210,11 @@ public class NIOService
 	 * @return a NIOSocket object for asynchronous communication.
 	 * @throws IOException if registering the new socket failed.
 	 */
-	public NIOSocket openSocket(InetAddress inetAddress, int port) throws IOException
+	public NIOSocket openSocket(final InetAddress inetAddress, final int port) throws IOException
 	{
-		SocketChannel channel = SocketChannel.open();
+		final SocketChannel channel = SocketChannel.open();
 		channel.configureBlocking(false);
-		InetSocketAddress address = new InetSocketAddress(inetAddress, port);
+		final InetSocketAddress address = new InetSocketAddress(inetAddress, port);
 		channel.connect(address);
 		return registerSocketChannel(channel, address);
 	}
@@ -233,11 +233,11 @@ public class NIOService
      * @return a NIOSocketSSL object for asynchronous communication.
      * @throws IOException if registering the new socket failed.
      */
-    public NIOSocketSSL openSSLSocket(SSLEngine sslEngine, InetAddress inetAddress, int port) throws IOException
+    public NIOSocketSSL openSSLSocket(final SSLEngine sslEngine, final InetAddress inetAddress, final int port) throws IOException
     {
-        SocketChannel channel = SocketChannel.open();
+        final SocketChannel channel = SocketChannel.open();
         channel.configureBlocking(false);
-        InetSocketAddress address = new InetSocketAddress(inetAddress, port);
+        final InetSocketAddress address = new InetSocketAddress(inetAddress, port);
         channel.connect(address);
         return new SSLSocketChannelResponder(this, registerSocketChannel(channel, address), sslEngine, true);
     }
@@ -256,7 +256,7 @@ public class NIOService
      * @return a NIOServerSocket for asynchronous connection to the server socket.
      * @throws IOException if registering the socket fails.
      */
-    public NIOServerSocket openServerSocket(int port, int backlog) throws IOException
+    public NIOServerSocket openServerSocket(final int port, final int backlog) throws IOException
     {
         return openServerSocket(new InetSocketAddress(port), backlog);
     }
@@ -274,7 +274,7 @@ public class NIOService
      * @return a NIOServerSocket for asynchronous connection to the server socket.
      * @throws IOException if registering the socket fails.
      */
-    public NIOServerSocketSSL openSSLServerSocket(SSLContext sslContext, int port, int backlog) throws IOException
+    public NIOServerSocketSSL openSSLServerSocket(final SSLContext sslContext, final int port, final int backlog) throws IOException
     {
         return openSSLServerSocket(sslContext, new InetSocketAddress(port), backlog);
     }
@@ -290,7 +290,7 @@ public class NIOService
 	 * @return a NIOServerSocket for asynchronous connection to the server socket.
 	 * @throws IOException if registering the socket fails.
 	 */
-	public NIOServerSocket openServerSocket(int port) throws IOException
+	public NIOServerSocket openServerSocket(final int port) throws IOException
 	{
 		return openServerSocket(port, -1);
 	}
@@ -307,7 +307,7 @@ public class NIOService
      * @return a NIOServerSocket for asynchronous connection to the server socket.
      * @throws IOException if registering the socket fails.
      */
-    public NIOServerSocketSSL openSSLServerSocket(SSLContext sslContext, int port) throws IOException
+    public NIOServerSocketSSL openSSLServerSocket(final SSLContext sslContext, final int port) throws IOException
     {
         return openSSLServerSocket(sslContext, port, -1);
     }
@@ -323,13 +323,13 @@ public class NIOService
 	 * @return a NIOServerSocket for asynchronous connection to the server socket.
 	 * @throws IOException if registering the socket fails.
 	 */
-	public NIOServerSocketSSL openSSLServerSocket(SSLContext sslContext, InetSocketAddress address, int backlog) throws IOException
+	public NIOServerSocketSSL openSSLServerSocket(final SSLContext sslContext, final InetSocketAddress address, final int backlog) throws IOException
 	{
-		ServerSocketChannel channel = ServerSocketChannel.open();
+		final ServerSocketChannel channel = ServerSocketChannel.open();
 		channel.socket().setReuseAddress(true);
 		channel.socket().bind(address, backlog);
 		channel.configureBlocking(false);
-		SSLServerSocketChannelResponder channelResponder = new SSLServerSocketChannelResponder(sslContext, this, channel, address);
+		final SSLServerSocketChannelResponder channelResponder = new SSLServerSocketChannelResponder(sslContext, this, channel, address);
 		queue(new RegisterChannelEvent(channelResponder));
 		return channelResponder;
 	}
@@ -345,13 +345,13 @@ public class NIOService
      * @return a NIOServerSocket for asynchronous connection to the server socket.
      * @throws IOException if registering the socket fails.
      */
-    public NIOServerSocket openServerSocket(InetSocketAddress address, int backlog) throws IOException
+    public NIOServerSocket openServerSocket(final InetSocketAddress address, final int backlog) throws IOException
     {
-        ServerSocketChannel channel = ServerSocketChannel.open();
+        final ServerSocketChannel channel = ServerSocketChannel.open();
         channel.socket().setReuseAddress(true);
         channel.socket().bind(address, backlog);
         channel.configureBlocking(false);
-        ServerSocketChannelResponder channelResponder = new ServerSocketChannelResponder(this, channel, address);
+        final ServerSocketChannelResponder channelResponder = new ServerSocketChannelResponder(this, channel, address);
         queue(new RegisterChannelEvent(channelResponder));
         return channelResponder;
     }
@@ -367,10 +367,10 @@ public class NIOService
 	 * @return the NIOSocket wrapper.
 	 * @throws IOException if configuring the channel fails, or the underlying selector is closed.
 	 */
-	NIOSocket registerSocketChannel(SocketChannel socketChannel, InetSocketAddress address) throws IOException
+	NIOSocket registerSocketChannel(final SocketChannel socketChannel, final InetSocketAddress address) throws IOException
 	{
 		socketChannel.configureBlocking(false);
-		SocketChannelResponder channelResponder = new SocketChannelResponder(this, socketChannel, address);
+		final SocketChannelResponder channelResponder = new SocketChannelResponder(this, socketChannel, address);
 		queue(new RegisterChannelEvent(channelResponder));
 		return channelResponder;
 	}
@@ -409,7 +409,7 @@ public class NIOService
 		for (Iterator<SelectionKey> it = m_selector.selectedKeys().iterator(); it.hasNext();)
 		{
 			// Retrieve the key.
-			SelectionKey key = it.next();
+			final SelectionKey key = it.next();
 
 			// Remove it from the set so that it is not read again.
 			it.remove();
@@ -433,7 +433,7 @@ public class NIOService
      * @param newBufferSize the new buffer size.
      * @throws IllegalArgumentException if the new size is less than 256 bytes.
      */
-    public void setBufferSize(int newBufferSize)
+    public void setBufferSize(final int newBufferSize)
     {
         if (newBufferSize < 256) throw new IllegalArgumentException("The buffer must at least hold 256 bytes");
         m_sharedBuffer = ByteBuffer.allocate(newBufferSize);
@@ -471,9 +471,9 @@ public class NIOService
 	 * Called on the NIOService thread.
 	 * @param key the key to handle.
 	 */
-	private void handleKey(SelectionKey key)
+	private void handleKey(final SelectionKey key)
 	{
-		ChannelResponder responder = (ChannelResponder) key.attachment();
+		final ChannelResponder responder = (ChannelResponder) key.attachment();
 		try
 		{
 			if (key.isReadable())
@@ -536,7 +536,7 @@ public class NIOService
 	 *
 	 * @param event the event to run on the NIOService-thread.
 	 */
-	public void queue(Runnable event)
+	public void queue(final Runnable event)
 	{
 		m_internalEventQueue.add(event);
 		wakeup();
@@ -565,10 +565,11 @@ public class NIOService
      *
      * @param exceptionObserver the new exception observer, if this is null, logging will be directed to stderr.
      */
-    public void setExceptionObserver(ExceptionObserver exceptionObserver)
+    public void setExceptionObserver(final ExceptionObserver exceptionObserver)
     {
         final ExceptionObserver newExceptionObserver = exceptionObserver == null ? ExceptionObserver.DEFAULT : exceptionObserver;
         queue(new Runnable() {
+            @Override
             public void run()
             {
                 m_exceptionObserver = newExceptionObserver;
@@ -583,7 +584,7 @@ public class NIOService
      *
      * @param t the exception thrown.
      */
-    public void notifyException(Throwable t)
+    public void notifyException(final Throwable t)
     {
         try
         {
@@ -604,16 +605,17 @@ public class NIOService
 	{
 		private final ChannelResponder m_channelResponder;
 
-		private RegisterChannelEvent(ChannelResponder channelResponder)
+		private RegisterChannelEvent(final ChannelResponder channelResponder)
 		{
 			m_channelResponder = channelResponder;
 		}
 
-		public void run()
+		@Override
+        public void run()
 		{
 			try
 			{
-				SelectionKey key = m_channelResponder.getChannel().register(m_selector, m_channelResponder.getChannel().validOps());
+				final SelectionKey key = m_channelResponder.getChannel().register(m_selector, m_channelResponder.getChannel().validOps());
 				m_channelResponder.setKey(key);
 				key.attach(m_channelResponder);
 			}
@@ -635,10 +637,11 @@ public class NIOService
 	 */
 	private class ShutdownEvent implements Runnable
 	{
-		public void run()
+		@Override
+        public void run()
 		{
 			if (!isOpen()) return;
-			for (SelectionKey key : m_selector.keys())
+			for (final SelectionKey key : m_selector.keys())
 			{
 				try
 				{

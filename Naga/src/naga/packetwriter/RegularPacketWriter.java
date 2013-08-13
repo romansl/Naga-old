@@ -55,14 +55,15 @@ public class RegularPacketWriter implements PacketWriter
 	 * @param headerSize the header size, 1 - 4 bytes.
 	 * @param bigEndian big endian (largest byte first) or little endian (smallest byte first)
 	 */
-	public RegularPacketWriter(int headerSize, boolean bigEndian)
+	public RegularPacketWriter(final int headerSize, final boolean bigEndian)
 	{
 		if (headerSize < 1 || headerSize > 4) throw new IllegalArgumentException("Header must be between 1 and 4 bytes long.");
 		m_bigEndian = bigEndian;
         m_header = ByteBuffer.allocate(headerSize);
 	}
 
-    public ByteBuffer[] write(ByteBuffer[] byteBuffers)
+    @Override
+    public ByteBuffer[] write(final ByteBuffer[] byteBuffers)
     {
         m_header.clear();
         NIOUtils.setPacketSizeInByteBuffer(m_header, m_header.capacity(),

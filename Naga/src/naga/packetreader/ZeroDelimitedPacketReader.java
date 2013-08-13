@@ -44,7 +44,7 @@ public class ZeroDelimitedPacketReader extends DelimiterPacketReader
 	 *
 	 * @param maxPacketSize the maximum packet size to accept.
 	 */
-	public ZeroDelimitedPacketReader(int maxPacketSize)
+	public ZeroDelimitedPacketReader(final int maxPacketSize)
 	{
 		super((byte)0, maxPacketSize);
 	}

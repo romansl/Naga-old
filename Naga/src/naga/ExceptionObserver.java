@@ -33,8 +33,9 @@ public interface ExceptionObserver
 {
 	ExceptionObserver DEFAULT = new ExceptionObserver()
 	{
-		@SuppressWarnings({"CallToPrintStackTrace"})
-		public void notifyExceptionThrown(Throwable e)
+		@Override
+        @SuppressWarnings({"CallToPrintStackTrace"})
+		public void notifyExceptionThrown(final Throwable e)
 		{
 			e.printStackTrace();
 		}

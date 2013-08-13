@@ -61,7 +61,7 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
     private final SSLSocketChannelResponder m_responder;
     private boolean m_sslInitiated;
 
-    public SSLPacketHandler(SSLEngine engine, NIOSocket socket, SSLSocketChannelResponder responder)
+    public SSLPacketHandler(final SSLEngine engine, final NIOSocket socket, final SSLSocketChannelResponder responder)
     {
         m_engine = engine;
         m_socket = socket;
@@ -77,7 +77,7 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         return m_reader;
     }
 
-    public void setReader(PacketReader reader)
+    public void setReader(final PacketReader reader)
     {
         m_reader = reader;
     }
@@ -87,7 +87,7 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         return m_writer;
     }
 
-    public void setWriter(PacketWriter writer)
+    public void setWriter(final PacketWriter writer)
     {
         m_writer = writer;
     }
@@ -108,10 +108,12 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         }
         TASK_HANDLER.execute(new Runnable()
         {
+            @Override
             public void run()
             {
                 m_socket.queue(new Runnable()
                 {
+                    @Override
                     public void run()
                     {
                         reactToHandshakeStatus(m_engine.getHandshakeStatus());
@@ -121,7 +123,8 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         });
     }
 
-    public byte[] nextPacket(ByteBuffer byteBuffer) throws ProtocolViolationException
+    @Override
+    public byte[] nextPacket(final ByteBuffer byteBuffer) throws ProtocolViolationException
     {
         if (!m_sslInitiated)
         {
@@ -131,11 +134,11 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         try
         {
             // Retrieve the local buffer.
-            ByteBuffer targetBuffer = SSL_BUFFER.get();
+            final ByteBuffer targetBuffer = SSL_BUFFER.get();
             targetBuffer.clear();
 
             // Unwrap the data (both buffers should be sufficiently large)
-            SSLEngineResult result = m_engine.unwrap(byteBuffer, targetBuffer);
+            final SSLEngineResult result = m_engine.unwrap(byteBuffer, targetBuffer);
             switch (result.getStatus())
             {
                 case BUFFER_UNDERFLOW:
@@ -162,7 +165,7 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         }
     }
 
-    private void reactToHandshakeStatus(SSLEngineResult.HandshakeStatus status)
+    private void reactToHandshakeStatus(final SSLEngineResult.HandshakeStatus status)
     {
         if (!m_sslInitiated) return;
         switch (status)
@@ -182,7 +185,7 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         }
     }
 
-    private byte[] retrieveDecryptedPacket(ByteBuffer targetBuffer) throws ProtocolViolationException
+    private byte[] retrieveDecryptedPacket(final ByteBuffer targetBuffer) throws ProtocolViolationException
     {
         // Prepare the buffer for reading.
         targetBuffer.flip();
@@ -197,6 +200,7 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         return m_reader.nextPacket(m_partialIncomingBuffer);
     }
 
+    @Override
     public ByteBuffer[] write(ByteBuffer[] byteBuffers)
     {
         if (!m_sslInitiated)
@@ -214,7 +218,7 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
                 byteBuffers = new ByteBuffer[0];
             }
             // Borrow the shared buffer.
-            ByteBuffer buffer = SSL_BUFFER.get();
+            final ByteBuffer buffer = SSL_BUFFER.get();
             ByteBuffer[] buffers = null;
             try
             {
@@ -246,7 +250,7 @@ public class SSLPacketHandler implements PacketReader, PacketWriter
         // We are not handshaking, so encrypt the data using wrap
 
         // Use the shared buffer.
-        ByteBuffer buffer = SSL_BUFFER.get();
+        final ByteBuffer buffer = SSL_BUFFER.get();
         buffer.clear();
 
         if (NIOUtils.isEmpty(byteBuffers))

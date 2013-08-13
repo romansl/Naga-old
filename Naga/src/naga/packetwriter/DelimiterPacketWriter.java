@@ -33,14 +33,15 @@ import java.nio.ByteBuffer;
  */
 public class DelimiterPacketWriter implements PacketWriter
 {
-    private ByteBuffer m_endByte;
+    private final ByteBuffer m_endByte;
 
-    public DelimiterPacketWriter(byte endByte)
+    public DelimiterPacketWriter(final byte endByte)
     {
         m_endByte = ByteBuffer.wrap(new byte[] { endByte });
     }
 
-    public ByteBuffer[] write(ByteBuffer[] byteBuffer)
+    @Override
+    public ByteBuffer[] write(final ByteBuffer[] byteBuffer)
     {
         m_endByte.rewind();
         return NIOUtils.concat(byteBuffer, m_endByte);

@@ -36,7 +36,7 @@ public class CipherPacketWriter implements PacketWriter
     private final Cipher m_cipher;
     private PacketWriter m_packetWriter;
 
-    public CipherPacketWriter(Cipher cipher, PacketWriter packetWriter)
+    public CipherPacketWriter(final Cipher cipher, final PacketWriter packetWriter)
     {
         m_cipher = cipher;
         m_packetWriter = packetWriter;
@@ -47,15 +47,16 @@ public class CipherPacketWriter implements PacketWriter
         return m_packetWriter;
     }
 
-    public void setPacketWriter(PacketWriter packetWriter)
+    public void setPacketWriter(final PacketWriter packetWriter)
     {
         m_packetWriter = packetWriter;
     }
 
+    @Override
     public ByteBuffer[] write(ByteBuffer[] byteBuffer)
     {
         byteBuffer = m_packetWriter.write(byteBuffer);
-        ByteBuffer[] resultBuffer = new ByteBuffer[byteBuffer.length];
+        final ByteBuffer[] resultBuffer = new ByteBuffer[byteBuffer.length];
         try
         {
             for (int i = 0; i < byteBuffer.length; i++)

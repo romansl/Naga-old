@@ -39,9 +39,9 @@ public class ValidationServer
 	ValidationServer() {
 	}
 
-	public static void main(String... args)
+	public static void main(final String... args)
 	{
-		int port = Integer.parseInt(args[0]);
+		final int port = Integer.parseInt(args[0]);
 		// Create a map with users and passwords.
 		final Map<String, String> passwords = new HashMap<String, String>();
 		passwords.put("Admin", "password");
@@ -50,11 +50,12 @@ public class ValidationServer
 		passwords.put("Lisa", "secret");
 		try
 		{
-			NIOService service = new NIOService();
-			NIOServerSocket socket = service.openServerSocket(port);
+			final NIOService service = new NIOService();
+			final NIOServerSocket socket = service.openServerSocket(port);
 			socket.listen(new ServerSocketObserverAdapter()
 			{
-				public void newConnection(NIOSocket nioSocket)
+				@Override
+                public void newConnection(final NIOSocket nioSocket)
 				{
 					System.out.println("Received connection: " + nioSocket);
 
@@ -67,7 +68,8 @@ public class ValidationServer
 					// Listen on the connection.
 					nioSocket.listen(new SocketObserverAdapter()
 					{
-						public void packetReceived(NIOSocket socket, byte[] packet)
+						@Override
+                        public void packetReceived(final NIOSocket socket, final byte[] packet)
 						{
 							// We received a packet. Should contain two encoded
 							// UTF strings with user and password.
@@ -75,15 +77,15 @@ public class ValidationServer
 							try
 							{
 								// Let us unpack the bytes by converting the bytes to a stream.
-								DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet));
+								final DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet));
 
 								// Read the two strings.
-								String user = stream.readUTF();
-								String password = stream.readUTF();
+								final String user = stream.readUTF();
+								final String password = stream.readUTF();
 
 								// Prepare to encode the response.
-								ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-								DataOutputStream out = new DataOutputStream(byteArrayOutputStream);
+								final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+								final DataOutputStream out = new DataOutputStream(byteArrayOutputStream);
 
 								if (!passwords.containsKey(user))
 								{
@@ -117,7 +119,7 @@ public class ValidationServer
 					});
 				}
 			});
-			
+
 			// Allow all logins.
 			socket.setConnectionAcceptor(ConnectionAcceptor.ALLOW);
 
